@@ -34,6 +34,7 @@ import { AGENT_HOOK_RUNTIME_ENV_KEYS } from './spawn-env-keys'
 import { applyManagedDataAccountEnvironment } from '../../../managed-data-accounts/launch-environment'
 import { applyOpenCodeStatusPluginEnv, captureOpenCodeSourceConfig } from './opencode-config'
 import { applyCodexRemoteViewerClipboardEnv } from './codex-terminal-clipboard'
+import { applyCodexWindowsSystemTarShimEnv } from '../../../codex/codex-windows-system-tar'
 
 /**
  * Mutates `baseEnv` in place with all host-local PTY env vars and returns it.
@@ -48,6 +49,11 @@ export function buildPtyHostEnv(
 ): Record<string, string> {
   mergePersistedWindowsPath(baseEnv)
   Object.assign(baseEnv, buildConfiguredProxyEnv(opts.networkProxySettings))
+  applyCodexWindowsSystemTarShimEnv(baseEnv, {
+    mode: opts.terminalWindowsCodexTar,
+    isWsl: opts.isWsl === true,
+    userDataPath: opts.userDataPath
+  })
 
   // Claude currently recognizes image support only in a short terminal allowlist.
   if (

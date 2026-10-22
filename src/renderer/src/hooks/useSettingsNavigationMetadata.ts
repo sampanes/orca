@@ -42,6 +42,7 @@ export function buildSettingsNavigationMetadata({
   isLocalWindowsHost = isWindows,
   isWindowsTerminalHost = isWindows,
   isWebClient,
+  showWindowsCodexTar = !isWebClient && isWindows && isLocalWindowsHost && isWindowsTerminalHost,
   nativeChatEnabled = false,
   hostQueuesMessages = false,
   managedBrowserCreationEnabled = !isWebClient,
@@ -55,6 +56,7 @@ export function buildSettingsNavigationMetadata({
   isWindows: boolean
   isLocalWindowsHost?: boolean
   isWindowsTerminalHost?: boolean
+  showWindowsCodexTar?: boolean
   isWebClient: boolean
   nativeChatEnabled?: boolean
   hostQueuesMessages?: boolean
@@ -67,7 +69,9 @@ export function buildSettingsNavigationMetadata({
 }): SettingsNavSection[] {
   const terminalPaneSearchEntries = getTerminalPaneSearchEntries({
     isWindows,
+    isLocalWindowsHost,
     isWindowsTerminalHost,
+    showWindowsCodexTar,
     isMac
   })
   const runtimeEnvironmentsSearchEntry = isWebClient
@@ -159,6 +163,7 @@ export function useSettingsNavigationMetadata(): SettingsNavSection[] {
     target: runtimeTarget,
     hostPlatform: windowsTerminalCapabilities.hostPlatform
   })
+  const showWindowsCodexTar = !isWebClient && runtimeTarget.kind === 'local' && isLocalWindowsHost
 
   // Why: Settings and Cmd+J share this metadata so platform/runtime visibility
   // and search entries cannot drift. Keep this hook free of Settings pane UI
@@ -170,6 +175,7 @@ export function useSettingsNavigationMetadata(): SettingsNavSection[] {
         isWindows,
         isLocalWindowsHost,
         isWindowsTerminalHost,
+        showWindowsCodexTar,
         isWebClient,
         nativeChatEnabled,
         hostQueuesMessages,
@@ -189,6 +195,7 @@ export function useSettingsNavigationMetadata(): SettingsNavSection[] {
       isWindows,
       isLocalWindowsHost,
       isWindowsTerminalHost,
+      showWindowsCodexTar,
       isWebClient,
       nativeChatEnabled,
       hostQueuesMessages,
